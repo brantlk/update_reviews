@@ -26,11 +26,13 @@ class UpdateReviews(object):
     def __init__(self, user, password, project):
         self.auth = auth.HTTPDigestAuth(user, password)
         self.project = project
+        self.base_url = 'https://review.openstack.org/'
 
     def _list_my_reviews(self):
-        url = 'https://review.openstack.org/a/changes/'
-        query = ('project:%s branch:master status:open '
-                 'label:Code-Review=-2,self' % self.project)
+        url = '%sa/changes/' % self.base_url
+        branch = 'master'
+        query = ('project:%s branch:%s status:open '
+                 'label:Code-Review=-2,self' % (self.project, branch))
         params = {'q': query, 'n': '2', 'o': 'CURRENT_REVISION'}
         r = requests.get(url, params=params, auth=self.auth)
         r.raise_for_status()
@@ -44,9 +46,8 @@ class UpdateReviews(object):
     def _update_review(self, r):
         change_id = r['id']
         revision_id = r['current_revision']
-        base_url = 'https://review.openstack.org/'
         url = ('%sa/changes/%s/revisions/%s/review' %
-               (base_url, change_id, revision_id))
+               (self.base_url, change_id, revision_id))
         headers = {'Content-Type': 'application/json'}
         payload = {
             'message': 'This project is now open for new features.',
