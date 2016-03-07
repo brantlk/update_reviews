@@ -55,7 +55,7 @@ class TestUpdateReviews(base.TestCase):
         exp_qs = {
             'n': ['2'],
             'q': ['project:%s branch:master status:open '
-                  'label:code-review=-2' % mock.sentinel.project],
+                  'label:code-review=-2,self' % mock.sentinel.project],
             'o': ['current_revision'],
         }
         self.assertEqual(exp_qs, m.request_history[0].qs)

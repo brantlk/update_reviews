@@ -30,7 +30,7 @@ class UpdateReviews(object):
     def _list_my_reviews(self):
         url = 'https://review.openstack.org/a/changes/'
         query = ('project:%s branch:master status:open '
-                 'label:Code-Review=-2' % self.project)
+                 'label:Code-Review=-2,self' % self.project)
         params = {'q': query, 'n': '2', 'o': 'CURRENT_REVISION'}
         r = requests.get(url, params=params, auth=self.auth)
         r.raise_for_status()

@@ -19,7 +19,7 @@ import update_reviews
 def main():
     user = sys.argv[1]
     password = sys.argv[2]
-    project = 'openstack/oslo.config'
+    project = sys.argv[3]
     print('Running...')
     u_r = update_reviews.UpdateReviews(user, password, project)
     print(json.dumps(u_r._list_my_reviews(), indent=4))
