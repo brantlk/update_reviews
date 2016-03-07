@@ -23,10 +23,12 @@ __version__ = pbr.version.VersionInfo('update_reviews').version_string()
 
 
 class UpdateReviews(object):
-    def __init__(self, user, password, project):
+    def __init__(self, user, password, project,
+                 updating_review_cb=lambda x: None):
         self.auth = auth.HTTPDigestAuth(user, password)
         self.project = project
         self.base_url = 'https://review.openstack.org/'
+        self.updating_review_cb = updating_review_cb
 
     def _list_my_reviews(self):
         url = '%sa/changes/' % self.base_url
@@ -60,4 +62,5 @@ class UpdateReviews(object):
 
     def update_my_reviews(self):
         for r in self._list_my_reviews():
+            self.updating_review_cb(r)
             self._update_review(r)

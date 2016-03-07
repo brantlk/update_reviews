@@ -40,6 +40,25 @@ class TestUpdateReviews(base.TestCase):
         exp_calls = [mock.call(mock.sentinel.r1), mock.call(mock.sentinel.r2)]
         self.assertEqual(exp_calls, update_review_mock.call_args_list)
 
+    def test_updating_review_callback(self):
+        cb = mock.Mock()
+        u_r = update_reviews.UpdateReviews(
+            mock.sentinel.user, mock.sentinel.password, mock.sentinel.project,
+            updating_review_cb=cb)
+
+        sample_reviews = [mock.sentinel.r1, mock.sentinel.r2]
+        po = mockpatch.PatchObject(u_r, '_list_my_reviews',
+                                   return_value=sample_reviews)
+        self.useFixture(po).mock
+
+        self.useFixture(
+            mockpatch.PatchObject(u_r, '_update_review')).mock
+
+        u_r.update_my_reviews()
+
+        exp_calls = [mock.call(mock.sentinel.r1), mock.call(mock.sentinel.r2)]
+        self.assertEqual(exp_calls, cb.call_args_list)
+
     @requests_mock.mock()
     def test_list_my_reviews(self, m):
         u_r = update_reviews.UpdateReviews(

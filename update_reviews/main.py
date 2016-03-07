@@ -16,12 +16,17 @@ import sys
 import update_reviews
 
 
+def updating_review_cb(r):
+    print('Updating %s in %s' % (r['change_id'], r['project']))
+
+
 def main():
     user = sys.argv[1]
     password = sys.argv[2]
     project = sys.argv[3]
     print('Running...')
-    u_r = update_reviews.UpdateReviews(user, password, project)
+    u_r = update_reviews.UpdateReviews(user, password, project,
+                                       updating_review_cb=updating_review_cb)
     print(json.dumps(u_r._list_my_reviews(), indent=4))
     print('Done')
 
