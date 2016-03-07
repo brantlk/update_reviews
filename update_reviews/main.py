@@ -19,5 +19,9 @@ def main():
     user = sys.argv[1]
     password = sys.argv[2]
     print('Running...')
-    print(update_reviews.list_my_reviews(user, password))
+    u_r = update_reviews.UpdateReviews(user, password)
+    print(u_r._list_my_reviews())
     print('Done')
+
+
+main()

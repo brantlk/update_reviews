@@ -23,16 +23,18 @@ from update_reviews.tests import base
 class TestUpdateReviews(base.TestCase):
 
     def test_update_my_reviews(self):
+        u_r = update_reviews.UpdateReviews(
+            mock.sentinel.user, mock.sentinel.password)
+
         sample_reviews = [mock.sentinel.r1, mock.sentinel.r2]
-        po = mockpatch.PatchObject(update_reviews, 'list_my_reviews',
+        po = mockpatch.PatchObject(u_r, '_list_my_reviews',
                                    return_value=sample_reviews)
         list_my_reviews_mock = self.useFixture(po).mock
 
         update_review_mock = self.useFixture(
-            mockpatch.PatchObject(update_reviews, 'update_review')).mock
+            mockpatch.PatchObject(u_r, '_update_review')).mock
 
-        update_reviews.update_my_reviews(
-            mock.sentinel.user, mock.sentinel.password)
+        u_r.update_my_reviews()
 
         self.assertEqual(1, list_my_reviews_mock.call_count)
         exp_calls = [mock.call(mock.sentinel.r1), mock.call(mock.sentinel.r2)]
@@ -40,13 +42,15 @@ class TestUpdateReviews(base.TestCase):
 
     @requests_mock.mock()
     def test_list_my_reviews(self, m):
+        u_r = update_reviews.UpdateReviews(
+            mock.sentinel.user, mock.sentinel.password)
+
         sample_result = []
 
         gerrit_magic_prefix = ")]}'\n"
         sample_text = '%s%s' % (gerrit_magic_prefix, json.dumps(sample_result))
         m.get('https://review.openstack.org/a/changes/', text=sample_text)
-        ret = update_reviews.list_my_reviews(
-            mock.sentinel.user, mock.sentinel.password)
+        ret = u_r._list_my_reviews()
         self.assertEqual(sample_result, ret)
         exp_qs = {
             'n': ['2'],

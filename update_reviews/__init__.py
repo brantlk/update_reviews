@@ -23,25 +23,28 @@ __version__ = pbr.version.VersionInfo(
     'update_reviews').version_string()
 
 
-def list_my_reviews(user, password):
-    url = 'https://review.openstack.org/a/changes/'
-    params = ('q=project:openstack/oslo.config+branch:master+status:open+'
-              'label:Code-Review=-2&n=2')
-    auth_ = auth.HTTPDigestAuth(user, password)
-    r = requests.get(url, params=params, auth=auth_)
-    r.raise_for_status()
+class UpdateReviews(object):
+    def __init__(self, user, password):
+        self._user = user
+        self._password = password
 
-    # Note that the result is not JSON, it's got a leading line that needs to
-    # be removed first.
-    res_text = r.text
-    (dummy_magic_prefix, dummy_nl, res_json) = res_text.partition('\n')
-    return json.loads(res_json)
+    def _list_my_reviews(self):
+        url = 'https://review.openstack.org/a/changes/'
+        params = ('q=project:openstack/oslo.config+branch:master+status:open+'
+                  'label:Code-Review=-2&n=2')
+        auth_ = auth.HTTPDigestAuth(self._user, self._password)
+        r = requests.get(url, params=params, auth=auth_)
+        r.raise_for_status()
 
+        # Note that the result is not JSON, it's got a leading line that needs
+        # to be removed first.
+        res_text = r.text
+        (dummy_magic_prefix, dummy_nl, res_json) = res_text.partition('\n')
+        return json.loads(res_json)
 
-def update_review(r):
-    print(r)  # FIXME: implement.
+    def _update_review(self, r):
+        print(self, r)  # FIXME: implement.
 
-
-def update_my_reviews(user, password):
-    for r in list_my_reviews(user, password):
-        update_review(r)
+    def update_my_reviews(self):
+        for r in self._list_my_reviews():
+            self._update_review(r)
