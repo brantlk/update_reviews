@@ -23,14 +23,14 @@ __version__ = pbr.version.VersionInfo('update_reviews').version_string()
 
 
 class UpdateReviews(object):
-    def __init__(self, user, password):
+    def __init__(self, user, password, project):
         self.auth = auth.HTTPDigestAuth(user, password)
+        self.project = project
 
     def _list_my_reviews(self):
         url = 'https://review.openstack.org/a/changes/'
-        project = 'openstack/oslo.config'
         query = ('project:%s branch:master status:open '
-                 'label:Code-Review=-2' % project)
+                 'label:Code-Review=-2' % self.project)
         params = {'q': query, 'n': '2', 'o': 'CURRENT_REVISION'}
         r = requests.get(url, params=params, auth=self.auth)
         r.raise_for_status()

@@ -24,7 +24,7 @@ class TestUpdateReviews(base.TestCase):
 
     def test_update_my_reviews(self):
         u_r = update_reviews.UpdateReviews(
-            mock.sentinel.user, mock.sentinel.password)
+            mock.sentinel.user, mock.sentinel.password, mock.sentinel.project)
 
         sample_reviews = [mock.sentinel.r1, mock.sentinel.r2]
         po = mockpatch.PatchObject(u_r, '_list_my_reviews',
@@ -43,7 +43,7 @@ class TestUpdateReviews(base.TestCase):
     @requests_mock.mock()
     def test_list_my_reviews(self, m):
         u_r = update_reviews.UpdateReviews(
-            mock.sentinel.user, mock.sentinel.password)
+            mock.sentinel.user, mock.sentinel.password, mock.sentinel.project)
 
         sample_result = []
 
@@ -54,8 +54,8 @@ class TestUpdateReviews(base.TestCase):
         self.assertEqual(sample_result, ret)
         exp_qs = {
             'n': ['2'],
-            'q': ['project:openstack/oslo.config branch:master status:open '
-                  'label:code-review=-2'],
+            'q': ['project:%s branch:master status:open '
+                  'label:code-review=-2' % mock.sentinel.project],
             'o': ['current_revision'],
         }
         self.assertEqual(exp_qs, m.request_history[0].qs)
@@ -63,7 +63,7 @@ class TestUpdateReviews(base.TestCase):
     @requests_mock.mock()
     def test_update_review(self, m):
         u_r = update_reviews.UpdateReviews(
-            mock.sentinel.user, mock.sentinel.password)
+            mock.sentinel.user, mock.sentinel.password, mock.sentinel.project)
 
         change_id = mock.sentinel.change_id
         revision_id = mock.sentinel.revision_id
