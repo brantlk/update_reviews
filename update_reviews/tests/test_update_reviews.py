@@ -23,8 +23,7 @@ from update_reviews.tests import base
 class TestUpdateReviews(base.TestCase):
 
     def test_update_my_reviews(self):
-        u_r = update_reviews.UpdateReviews(
-            mock.sentinel.user, mock.sentinel.password, mock.sentinel.project)
+        u_r = update_reviews.UpdateReviews(mock.sentinel.project)
 
         sample_reviews = [mock.sentinel.r1, mock.sentinel.r2]
         po = mockpatch.PatchObject(u_r, '_list_my_reviews',
@@ -42,9 +41,8 @@ class TestUpdateReviews(base.TestCase):
 
     def test_updating_review_callback(self):
         cb = mock.Mock()
-        u_r = update_reviews.UpdateReviews(
-            mock.sentinel.user, mock.sentinel.password, mock.sentinel.project,
-            updating_review_cb=cb)
+        u_r = update_reviews.UpdateReviews(mock.sentinel.project,
+                                           updating_review_cb=cb)
 
         sample_reviews = [mock.sentinel.r1, mock.sentinel.r2]
         po = mockpatch.PatchObject(u_r, '_list_my_reviews',
@@ -61,8 +59,7 @@ class TestUpdateReviews(base.TestCase):
 
     @requests_mock.mock()
     def test_list_my_reviews(self, m):
-        u_r = update_reviews.UpdateReviews(
-            mock.sentinel.user, mock.sentinel.password, mock.sentinel.project)
+        u_r = update_reviews.UpdateReviews(mock.sentinel.project)
 
         sample_result = []
 
@@ -80,8 +77,7 @@ class TestUpdateReviews(base.TestCase):
 
     @requests_mock.mock()
     def test_update_review(self, m):
-        u_r = update_reviews.UpdateReviews(
-            mock.sentinel.user, mock.sentinel.password, mock.sentinel.project)
+        u_r = update_reviews.UpdateReviews(mock.sentinel.project)
 
         change_id = mock.sentinel.change_id
         revision_id = mock.sentinel.revision_id
