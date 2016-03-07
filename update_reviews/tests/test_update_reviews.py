@@ -55,5 +55,7 @@ class TestUpdateReviews(base.TestCase):
         exp_qs = {
             'n': ['2'],
             'q': ['project:openstack/oslo.config branch:master status:open '
-                  'label:code-review=-2']}
+                  'label:code-review=-2'],
+            'o': ['current_revision'],
+        }
         self.assertEqual(exp_qs, m.request_history[0].qs)

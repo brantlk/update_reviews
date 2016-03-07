@@ -10,6 +10,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import json
 import sys
 
 import update_reviews
@@ -20,7 +21,7 @@ def main():
     password = sys.argv[2]
     print('Running...')
     u_r = update_reviews.UpdateReviews(user, password)
-    print(u_r._list_my_reviews())
+    print(json.dumps(u_r._list_my_reviews(), indent=4))
     print('Done')
 
 

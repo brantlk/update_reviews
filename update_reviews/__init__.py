@@ -19,8 +19,7 @@ import requests
 from requests import auth
 
 
-__version__ = pbr.version.VersionInfo(
-    'update_reviews').version_string()
+__version__ = pbr.version.VersionInfo('update_reviews').version_string()
 
 
 class UpdateReviews(object):
@@ -29,9 +28,10 @@ class UpdateReviews(object):
 
     def _list_my_reviews(self):
         url = 'https://review.openstack.org/a/changes/'
-        query = ('project:openstack/oslo.config branch:master status:open '
-                 'label:Code-Review=-2')
-        params = {'q': query, 'n': '2'}
+        project = 'openstack/oslo.config'
+        query = ('project:%s branch:master status:open '
+                 'label:Code-Review=-2' % project)
+        params = {'q': query, 'n': '2', 'o': 'CURRENT_REVISION'}
         r = requests.get(url, params=params, auth=self.auth)
         r.raise_for_status()
 
@@ -42,7 +42,7 @@ class UpdateReviews(object):
         return json.loads(res_json)
 
     def _update_review(self, r):
-        print(self, r)  # FIXME: implement.
+        print(r)  # FIXME: implement.
 
     def update_my_reviews(self):
         for r in self._list_my_reviews():
