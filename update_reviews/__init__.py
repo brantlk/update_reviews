@@ -42,7 +42,20 @@ class UpdateReviews(object):
         return json.loads(res_json)
 
     def _update_review(self, r):
-        print(r)  # FIXME: implement.
+        change_id = r['id']
+        revision_id = r['current_revision']
+        base_url = 'https://review.openstack.org/'
+        url = ('%sa/changes/%s/revisions/%s/review' %
+               (base_url, change_id, revision_id))
+        headers = {'Content-Type': 'application/json'}
+        payload = {
+            'message': 'This project is now open for new features.',
+            'labels': {
+                'Code-Review': 0,
+            },
+        }
+        r = requests.post(url, auth=self.auth, headers=headers, json=payload)
+        r.raise_for_status()
 
     def update_my_reviews(self):
         for r in self._list_my_reviews():

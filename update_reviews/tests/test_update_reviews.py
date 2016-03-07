@@ -59,3 +59,32 @@ class TestUpdateReviews(base.TestCase):
             'o': ['current_revision'],
         }
         self.assertEqual(exp_qs, m.request_history[0].qs)
+
+    @requests_mock.mock()
+    def test_update_review(self, m):
+        u_r = update_reviews.UpdateReviews(
+            mock.sentinel.user, mock.sentinel.password)
+
+        change_id = mock.sentinel.change_id
+        revision_id = mock.sentinel.revision_id
+
+        url_base = 'https://review.openstack.org/'
+        url = ('%sa/changes/%s/revisions/%s/review' %
+               (url_base, change_id, revision_id))
+        m.post(url)
+
+        review = {
+            'id': change_id,
+            'current_revision': revision_id,
+        }
+
+        u_r._update_review(review)
+
+        exp_req = {
+            'message': 'This project is now open for new features.',
+            'labels': {
+                'Code-Review': 0,
+            },
+        }
+
+        self.assertEqual(exp_req, m.request_history[0].json())
