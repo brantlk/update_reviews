@@ -30,8 +30,9 @@ class UpdateReviews(object):
 
     def _list_my_reviews(self):
         url = 'https://review.openstack.org/a/changes/'
-        params = ('q=project:openstack/oslo.config+branch:master+status:open+'
-                  'label:Code-Review=-2&n=2')
+        query = ('project:openstack/oslo.config branch:master status:open '
+                 'label:Code-Review=-2')
+        params = {'q': query, 'n': '2'}
         auth_ = auth.HTTPDigestAuth(self._user, self._password)
         r = requests.get(url, params=params, auth=auth_)
         r.raise_for_status()
