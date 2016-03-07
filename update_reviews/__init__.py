@@ -25,16 +25,14 @@ __version__ = pbr.version.VersionInfo(
 
 class UpdateReviews(object):
     def __init__(self, user, password):
-        self._user = user
-        self._password = password
+        self.auth = auth.HTTPDigestAuth(user, password)
 
     def _list_my_reviews(self):
         url = 'https://review.openstack.org/a/changes/'
         query = ('project:openstack/oslo.config branch:master status:open '
                  'label:Code-Review=-2')
         params = {'q': query, 'n': '2'}
-        auth_ = auth.HTTPDigestAuth(self._user, self._password)
-        r = requests.get(url, params=params, auth=auth_)
+        r = requests.get(url, params=params, auth=self.auth)
         r.raise_for_status()
 
         # Note that the result is not JSON, it's got a leading line that needs
