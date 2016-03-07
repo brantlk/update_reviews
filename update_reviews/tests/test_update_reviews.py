@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
@@ -12,17 +10,46 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""
-test_update_reviews
-----------------------------------
+import json
 
-Tests for `update_reviews` module.
-"""
+import mock
+from oslotest import mockpatch
+import requests_mock
 
+import update_reviews
 from update_reviews.tests import base
 
 
-class TestUpdate_reviews(base.TestCase):
+class TestUpdateReviews(base.TestCase):
 
-    def test_something(self):
-        pass
+    def test_update_my_reviews(self):
+        sample_reviews = [mock.sentinel.r1, mock.sentinel.r2]
+        po = mockpatch.PatchObject(update_reviews, 'list_my_reviews',
+                                   return_value=sample_reviews)
+        list_my_reviews_mock = self.useFixture(po).mock
+
+        update_review_mock = self.useFixture(
+            mockpatch.PatchObject(update_reviews, 'update_review')).mock
+
+        update_reviews.update_my_reviews(
+            mock.sentinel.user, mock.sentinel.password)
+
+        self.assertEqual(1, list_my_reviews_mock.call_count)
+        exp_calls = [mock.call(mock.sentinel.r1), mock.call(mock.sentinel.r2)]
+        self.assertEqual(exp_calls, update_review_mock.call_args_list)
+
+    @requests_mock.mock()
+    def test_list_my_reviews(self, m):
+        sample_result = []
+
+        gerrit_magic_prefix = ")]}'\n"
+        sample_text = '%s%s' % (gerrit_magic_prefix, json.dumps(sample_result))
+        m.get('https://review.openstack.org/a/changes/', text=sample_text)
+        ret = update_reviews.list_my_reviews(
+            mock.sentinel.user, mock.sentinel.password)
+        self.assertEqual(sample_result, ret)
+        exp_qs = {
+            'n': ['2'],
+            'q': ['project:openstack/oslo.config branch:master status:open '
+                  'label:code-review=-2']}
+        self.assertEqual(exp_qs, m.request_history[0].qs)

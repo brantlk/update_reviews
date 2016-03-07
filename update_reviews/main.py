@@ -1,4 +1,3 @@
-#
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
@@ -11,9 +10,14 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import testtools
+import sys
+
+import update_reviews
 
 
-class TestCase(testtools.TestCase):
-
-    """Test case base class for all unit tests."""
+def main():
+    user = sys.argv[1]
+    password = sys.argv[2]
+    print('Running...')
+    print(update_reviews.list_my_reviews(user, password))
+    print('Done')
