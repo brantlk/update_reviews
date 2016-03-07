@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = update_reviews
+omit = update_reviews/openstack/*
+
+[report]
+ignore_errors = True
