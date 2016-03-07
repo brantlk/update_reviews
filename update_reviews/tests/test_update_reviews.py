@@ -53,7 +53,6 @@ class TestUpdateReviews(base.TestCase):
         ret = u_r._list_my_reviews()
         self.assertEqual(sample_result, ret)
         exp_qs = {
-            'n': ['2'],
             'q': ['project:%s branch:master status:open '
                   'label:code-review=-2,self' % mock.sentinel.project],
             'o': ['current_revision'],

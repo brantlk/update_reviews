@@ -33,7 +33,7 @@ class UpdateReviews(object):
         branch = 'master'
         query = ('project:%s branch:%s status:open '
                  'label:Code-Review=-2,self' % (self.project, branch))
-        params = {'q': query, 'n': '2', 'o': 'CURRENT_REVISION'}
+        params = {'q': query, 'o': 'CURRENT_REVISION'}
         r = requests.get(url, params=params, auth=self.auth)
         r.raise_for_status()
 
