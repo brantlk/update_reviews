@@ -22,7 +22,18 @@ from update_reviews.tests import base
 
 class TestUpdateReviews(base.TestCase):
 
+    def _patch_conf(self):
+        fake_conf = {
+            'username': mock.sentinel.username,
+            'password': mock.sentinel.password,
+            'url': 'https://review.openstack.org/',
+        }
+        po = mockpatch.PatchObject(update_reviews, '_read_config',
+                                   return_value=fake_conf)
+        self.useFixture(po)
+
     def test_update_my_reviews(self):
+        self._patch_conf()
         u_r = update_reviews.UpdateReviews(mock.sentinel.project)
 
         sample_reviews = [mock.sentinel.r1, mock.sentinel.r2]
@@ -40,6 +51,8 @@ class TestUpdateReviews(base.TestCase):
         self.assertEqual(exp_calls, update_review_mock.call_args_list)
 
     def test_updating_review_callback(self):
+        self._patch_conf()
+
         cb = mock.Mock()
         u_r = update_reviews.UpdateReviews(mock.sentinel.project,
                                            updating_review_cb=cb)
@@ -59,6 +72,7 @@ class TestUpdateReviews(base.TestCase):
 
     @requests_mock.mock()
     def test_list_my_reviews(self, m):
+        self._patch_conf()
         u_r = update_reviews.UpdateReviews(mock.sentinel.project)
 
         sample_result = []
@@ -77,6 +91,7 @@ class TestUpdateReviews(base.TestCase):
 
     @requests_mock.mock()
     def test_update_review(self, m):
+        self._patch_conf()
         u_r = update_reviews.UpdateReviews(mock.sentinel.project)
 
         change_id = mock.sentinel.change_id

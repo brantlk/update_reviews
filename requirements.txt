@@ -3,4 +3,5 @@
 # process, which may cause wedges in the gate later.
 
 pbr>=1.6
+pyyaml>=3.11
 requests>=2.9.1

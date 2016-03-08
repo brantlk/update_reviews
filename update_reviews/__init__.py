@@ -13,13 +13,23 @@
 # under the License.
 
 import json
+import os.path
 
 import pbr.version
 import requests
 from requests import auth
+import yaml
 
 
 __version__ = pbr.version.VersionInfo('update_reviews').version_string()
+
+
+def _read_config(self):
+    data = yaml.safe_load(open(os.path.expanduser('~/.gertty.yaml')))
+    servers = data['servers']
+    for s in servers:
+        if s['name'] == 'openstack':
+            return s
 
 
 class UpdateReviews(object):
@@ -27,13 +37,16 @@ class UpdateReviews(object):
                  updating_review_cb=lambda x: None):
         self.base_url = 'https://review.openstack.org/'
 
+        if not (user and password):
+            config = _read_config()
+            user = config['username']
+            password = config['password']
+            self.base_url = config['url']
+
+        self.auth = auth.HTTPDigestAuth(user, password)
+
         self.project = project
         self.updating_review_cb = updating_review_cb
-
-        auth_ = None
-        if user and password:
-            auth_ = auth.HTTPDigestAuth(user, password)
-        self.auth = auth_
 
     def _list_my_reviews(self):
         url = '%sa/changes/' % self.base_url
