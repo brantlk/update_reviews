@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import json
 import sys
+import warnings
 
 import update_reviews
 
@@ -21,11 +21,15 @@ def updating_review_cb(r):
 
 
 def main():
+
+    # Get urllib3 to shut up.
+    warnings.simplefilter('ignore', Warning)
+
     project = sys.argv[1]
     print('Running...')
     u_r = update_reviews.UpdateReviews(project,
                                        updating_review_cb=updating_review_cb)
-    print(json.dumps(u_r._list_my_reviews(), indent=4))
+    u_r.update_my_reviews()
     print('Done')
 
 
