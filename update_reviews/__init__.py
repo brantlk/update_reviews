@@ -24,7 +24,7 @@ import yaml
 __version__ = pbr.version.VersionInfo('update_reviews').version_string()
 
 
-def _read_config(self):
+def _read_config():
     data = yaml.safe_load(open(os.path.expanduser('~/.gertty.yaml')))
     servers = data['servers']
     for s in servers:
